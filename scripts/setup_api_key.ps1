@@ -41,8 +41,8 @@ Write-Host "Updating .env file..." -ForegroundColor Yellow
 $envContent = Get-Content .env -Raw
 
 # Replace the API key line
-$envContent = $envContent -replace 'CLASH_ROYALE_API_KEY=.*', "CLASH_ROYALE_API_KEY=$apiKey"
-$envContent = $envContent -replace 'USE_MOCK_DATA=.*', 'USE_MOCK_DATA=false'
+$envContent = $envContent -replace "CLASH_ROYALE_API_KEY=.*", "CLASH_ROYALE_API_KEY=$apiKey"
+$envContent = $envContent -replace "USE_MOCK_DATA=.*", "USE_MOCK_DATA=false"
 
 # Write back to file
 Set-Content -Path .env -Value $envContent -NoNewline
