@@ -53,152 +53,239 @@ async def root():
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: #f6f7f9;
                 min-height: 100vh;
+                padding: 0;
+            }
+            .header {
+                background: #262421;
+                color: white;
+                padding: 20px 0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 30px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                padding: 20px;
+                justify-content: space-between;
             }
-            .container {
-                background: white;
-                border-radius: 20px;
-                padding: 40px;
-                max-width: 600px;
-                width: 100%;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
             }
-            h1 {
-                color: #333;
-                margin-bottom: 10px;
-                font-size: 36px;
+            .logo h1 {
+                color: white;
+                font-size: 24px;
+                font-weight: 700;
+                letter-spacing: -0.5px;
+            }
+            .logo-icon {
+                font-size: 28px;
             }
             .tagline {
-                color: #666;
-                margin-bottom: 30px;
-                font-size: 18px;
+                color: #a0a0a0;
+                font-size: 14px;
+                margin-left: 40px;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 30px auto;
+                padding: 0 30px;
+            }
+            .search-section {
+                background: white;
+                border-radius: 8px;
+                padding: 24px;
+                margin-bottom: 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
             .search-box {
                 display: flex;
-                gap: 10px;
-                margin-bottom: 30px;
+                gap: 12px;
+                max-width: 600px;
             }
             input {
                 flex: 1;
-                padding: 15px;
-                border: 2px solid #e0e0e0;
-                border-radius: 10px;
-                font-size: 16px;
+                padding: 12px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 15px;
+                font-family: inherit;
+                transition: all 0.2s;
             }
             input:focus {
                 outline: none;
-                border-color: #667eea;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
             }
             button {
-                padding: 15px 30px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 12px 24px;
+                background: #3b82f6;
                 color: white;
                 border: none;
-                border-radius: 10px;
-                font-size: 16px;
-                font-weight: bold;
+                border-radius: 6px;
+                font-size: 15px;
+                font-weight: 600;
                 cursor: pointer;
-                transition: transform 0.2s;
+                transition: background 0.2s;
             }
             button:hover {
-                transform: translateY(-2px);
+                background: #2563eb;
             }
             button:active {
-                transform: translateY(0);
+                background: #1d4ed8;
             }
             .status {
-                padding: 15px;
-                border-radius: 10px;
-                margin-bottom: 20px;
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 16px;
                 display: none;
+                font-size: 14px;
             }
             .status.success {
-                background: #d4edda;
-                color: #155724;
+                background: #ecfdf5;
+                color: #065f46;
+                border: 1px solid #a7f3d0;
                 display: block;
             }
             .status.error {
-                background: #f8d7da;
-                color: #721c24;
+                background: #fef2f2;
+                color: #991b1b;
+                border: 1px solid #fecaca;
                 display: block;
             }
             .status.info {
-                background: #d1ecf1;
-                color: #0c5460;
+                background: #eff6ff;
+                color: #1e40af;
+                border: 1px solid #bfdbfe;
                 display: block;
             }
-            .results {
-                background: #f8f9fa;
-                border-radius: 10px;
-                padding: 20px;
-                margin-top: 20px;
-                display: none;
-            }
-            .results.show {
-                display: block;
-            }
-            .battle-card {
+            .player-header {
                 background: white;
-                border-radius: 10px;
-                padding: 15px;
-                margin-bottom: 10px;
-                border-left: 4px solid #667eea;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
+                border-radius: 8px;
+                padding: 24px;
+                margin-bottom: 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
-            .battle-card:hover {
-                transform: translateX(5px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            .player-header h2 {
+                font-size: 28px;
+                color: #111827;
+                margin-bottom: 8px;
+                font-weight: 700;
             }
-            .deck-preview {
-                display: flex;
-                gap: 5px;
-                margin-top: 10px;
-                flex-wrap: wrap;
+            .player-info {
+                color: #6b7280;
+                font-size: 14px;
+                margin-bottom: 20px;
             }
-            .card-badge {
-                background: #667eea;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-            }
-            .archetype {
-                display: inline-block;
-                background: #764ba2;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-                margin-top: 5px;
+            .player-info span {
+                margin-right: 20px;
             }
             .stats {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
-                margin-top: 20px;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 16px;
             }
             .stat-card {
-                background: white;
-                padding: 15px;
-                border-radius: 10px;
-                text-align: center;
+                background: #f9fafb;
+                padding: 16px;
+                border-radius: 6px;
+                border: 1px solid #e5e7eb;
             }
             .stat-value {
-                font-size: 24px;
-                font-weight: bold;
-                color: #667eea;
+                font-size: 28px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 4px;
             }
             .stat-label {
+                font-size: 13px;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 500;
+            }
+            .section-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 16px;
+            }
+            .battles-section {
+                background: white;
+                border-radius: 8px;
+                padding: 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .battle-card {
+                background: #fafafa;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .battle-card:hover {
+                border-color: #3b82f6;
+                box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+                transform: translateY(-1px);
+            }
+            .battle-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+            .battle-result {
+                font-weight: 700;
+                font-size: 15px;
+            }
+            .battle-result.win { color: #059669; }
+            .battle-result.loss { color: #dc2626; }
+            .battle-result.draw { color: #d97706; }
+            .battle-mode {
+                color: #6b7280;
+                font-size: 14px;
+                margin-left: 12px;
+            }
+            .battle-score {
+                font-size: 20px;
+                font-weight: 700;
+                color: #111827;
+            }
+            .battle-opponent {
+                color: #6b7280;
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+            .deck-preview {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .card-badge {
+                background: white;
+                border: 1px solid #d1d5db;
+                color: #374151;
+                padding: 4px 10px;
+                border-radius: 4px;
                 font-size: 12px;
-                color: #666;
-                margin-top: 5px;
+                font-weight: 500;
+            }
+            .archetype {
+                display: inline-block;
+                background: #3b82f6;
+                color: white;
+                padding: 4px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                margin-bottom: 8px;
             }
             .modal {
                 display: none;
@@ -207,159 +294,205 @@ async def root():
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0,0,0,0.7);
+                background: rgba(0,0,0,0.6);
                 z-index: 1000;
                 overflow-y: auto;
-                padding: 20px;
+                padding: 40px 20px;
             }
             .modal.show {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: center;
             }
             .modal-content {
                 background: white;
-                border-radius: 20px;
-                padding: 30px;
-                max-width: 900px;
+                border-radius: 8px;
+                padding: 32px;
+                max-width: 1000px;
                 width: 100%;
-                max-height: 90vh;
-                overflow-y: auto;
                 position: relative;
+                box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
             }
             .modal-close {
                 position: absolute;
-                top: 20px;
-                right: 20px;
-                font-size: 28px;
+                top: 16px;
+                right: 16px;
+                font-size: 24px;
                 cursor: pointer;
-                color: #666;
-                width: 40px;
-                height: 40px;
+                color: #9ca3af;
+                width: 32px;
+                height: 32px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 50%;
-                transition: background 0.2s;
+                border-radius: 6px;
+                transition: all 0.2s;
             }
             .modal-close:hover {
-                background: #f0f0f0;
+                background: #f3f4f6;
+                color: #374151;
             }
             .battle-detail-header {
                 text-align: center;
-                margin-bottom: 30px;
-                padding-bottom: 20px;
-                border-bottom: 2px solid #e0e0e0;
+                margin-bottom: 32px;
+                padding-bottom: 24px;
+                border-bottom: 1px solid #e5e7eb;
             }
-            .battle-score {
-                font-size: 48px;
-                font-weight: bold;
-                color: #667eea;
-                margin: 10px 0;
+            .battle-detail-header h2 {
+                font-size: 32px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+            .detail-score {
+                font-size: 56px;
+                font-weight: 800;
+                color: #111827;
+                margin: 12px 0;
+                letter-spacing: -1px;
+            }
+            .detail-meta {
+                color: #6b7280;
+                font-size: 14px;
+                margin-top: 8px;
             }
             .vs-section {
                 display: grid;
                 grid-template-columns: 1fr auto 1fr;
-                gap: 20px;
-                margin: 30px 0;
+                gap: 24px;
+                margin: 32px 0;
                 align-items: start;
             }
             .player-section {
-                background: #f8f9fa;
-                border-radius: 15px;
+                background: #fafafa;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
                 padding: 20px;
             }
             .player-section h3 {
-                color: #667eea;
-                margin-bottom: 15px;
-                font-size: 18px;
+                color: #111827;
+                margin-bottom: 12px;
+                font-size: 16px;
+                font-weight: 700;
+            }
+            .deck-meta {
+                color: #6b7280;
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+            .deck-meta strong {
+                color: #374151;
+                font-weight: 600;
             }
             .deck-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
-                margin-top: 15px;
             }
             .card-detail {
                 background: white;
-                padding: 10px;
-                border-radius: 8px;
-                font-size: 14px;
+                padding: 10px 12px;
+                border-radius: 6px;
+                border: 1px solid #e5e7eb;
+                font-size: 13px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                font-weight: 500;
+                color: #374151;
             }
             .card-level {
-                background: #667eea;
+                background: #3b82f6;
                 color: white;
                 padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 12px;
-                font-weight: bold;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 700;
             }
             .vs-divider {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 24px;
-                font-weight: bold;
-                color: #764ba2;
+                font-size: 20px;
+                font-weight: 700;
+                color: #9ca3af;
             }
             .info-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                margin-top: 20px;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+                margin-top: 24px;
             }
             .info-item {
-                background: #f8f9fa;
-                padding: 15px;
-                border-radius: 10px;
+                background: #fafafa;
+                border: 1px solid #e5e7eb;
+                padding: 16px;
+                border-radius: 6px;
             }
             .info-label {
                 font-size: 12px;
-                color: #666;
-                margin-bottom: 5px;
+                color: #6b7280;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 600;
             }
             .info-value {
                 font-size: 16px;
-                font-weight: bold;
-                color: #333;
+                font-weight: 700;
+                color: #111827;
             }
             .matchup-indicator {
-                padding: 15px;
-                border-radius: 10px;
+                padding: 16px;
+                border-radius: 6px;
                 text-align: center;
-                margin: 20px 0;
-                font-weight: bold;
+                margin: 24px 0;
+                font-weight: 600;
+                font-size: 14px;
+                border: 1px solid;
             }
             .matchup-favorable {
-                background: #d4edda;
-                color: #155724;
+                background: #ecfdf5;
+                color: #065f46;
+                border-color: #a7f3d0;
             }
             .matchup-neutral {
-                background: #fff3cd;
-                color: #856404;
+                background: #fef3c7;
+                color: #92400e;
+                border-color: #fde68a;
             }
             .matchup-unfavorable {
-                background: #f8d7da;
-                color: #721c24;
+                background: #fef2f2;
+                color: #991b1b;
+                border-color: #fecaca;
+            }
+            .section-divider {
+                height: 1px;
+                background: #e5e7eb;
+                margin: 32px 0;
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1>⚔️ ClashFish</h1>
-            <p class="tagline">Stockfish for Clash Royale - Analyze your battles like never before</p>
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">⚔️</span>
+                    <h1>ClashFish</h1>
+                    <span class="tagline">Stockfish for Clash Royale</span>
+                </div>
+            </div>
+        </div>
 
-            <div class="search-box">
-                <input type="text" id="playerTag" placeholder="Enter player tag (e.g., V2QUUQVU8)" value="V2QUUQVU8">
-                <button onclick="analyzePlayer()">Analyze</button>
+        <div class="container">
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="playerTag" placeholder="Enter player tag (e.g., V2QUUQVU8)" value="V2QUUQVU8">
+                    <button onclick="analyzePlayer()">Analyze Player</button>
+                </div>
+                <div id="status" class="status"></div>
             </div>
 
-            <div id="status" class="status"></div>
-
-            <div id="results" class="results"></div>
+            <div id="results"></div>
         </div>
 
         <!-- Battle Detail Modal -->
@@ -421,44 +554,48 @@ async def root():
                 currentBattles = battles;
 
                 let html = `
-                    <h2>${player.player_name}</h2>
-                    <p><strong>Tag:</strong> ${player.player_tag} | <strong>Trophies:</strong> 🏆 ${player.current_trophies}</p>
+                    <div class="player-header">
+                        <h2>${player.player_name}</h2>
+                        <div class="player-info">
+                            <span><strong>Tag:</strong> ${player.player_tag}</span>
+                            <span><strong>Trophies:</strong> ${player.current_trophies} 🏆</span>
+                        </div>
 
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-value">${player.wins}</div>
-                            <div class="stat-label">Wins</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${player.losses}</div>
-                            <div class="stat-label">Losses</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${winRate}%</div>
-                            <div class="stat-label">Win Rate</div>
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${player.wins}</div>
+                                <div class="stat-label">Wins</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${player.losses}</div>
+                                <div class="stat-label">Losses</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${winRate}%</div>
+                                <div class="stat-label">Win Rate</div>
+                            </div>
                         </div>
                     </div>
 
-                    <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Battles (${battles.length}) - Click for details</h3>
+                    <div class="battles-section">
+                        <h3 class="section-title">Recent Battles</h3>
                 `;
 
                 battles.forEach((battle, index) => {
-                    const result = battle.player1_result === 'win' ? '🏆 WIN' : battle.player1_result === 'loss' ? '❌ LOSS' : '🤝 DRAW';
-                    const resultColor = battle.player1_result === 'win' ? '#28a745' : battle.player1_result === 'loss' ? '#dc3545' : '#ffc107';
+                    const resultText = battle.player1_result === 'win' ? 'Victory' : battle.player1_result === 'loss' ? 'Defeat' : 'Draw';
+                    const resultClass = battle.player1_result;
 
                     html += `
                         <div class="battle-card" onclick="showBattleDetail(${index})">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="battle-header">
                                 <div>
-                                    <strong style="color: ${resultColor};">${result}</strong>
-                                    <span style="color: #666; margin-left: 10px;">${battle.game_mode}</span>
+                                    <span class="battle-result ${resultClass}">${resultText}</span>
+                                    <span class="battle-mode">${battle.game_mode}</span>
                                 </div>
-                                <div style="font-size: 24px; font-weight: bold;">
-                                    ${battle.player1_crowns} - ${battle.player2_crowns}
-                                </div>
+                                <div class="battle-score">${battle.player1_crowns} - ${battle.player2_crowns}</div>
                             </div>
-                            <div style="margin-top: 5px; color: #666; font-size: 14px;">
-                                vs ${battle.opponent_name || 'Opponent'} | ${battle.arena || 'Arena'}
+                            <div class="battle-opponent">
+                                vs ${battle.opponent_name || 'Opponent'} • ${battle.arena || 'Arena'}
                             </div>
                             ${battle.deck_archetype ? `<span class="archetype">${battle.deck_archetype}</span>` : ''}
                             <div class="deck-preview">
@@ -468,8 +605,9 @@ async def root():
                     `;
                 });
 
+                html += `</div>`;
+
                 resultsDiv.innerHTML = html;
-                resultsDiv.classList.add('show');
             }
 
             function showBattleDetail(battleIndex) {
@@ -477,37 +615,40 @@ async def root():
                 const modal = document.getElementById('battleModal');
                 const detailDiv = document.getElementById('battleDetail');
 
-                const result = battle.player1_result === 'win' ? '🏆 VICTORY' : battle.player1_result === 'loss' ? '❌ DEFEAT' : '🤝 DRAW';
-                const resultColor = battle.player1_result === 'win' ? '#28a745' : battle.player1_result === 'loss' ? '#dc3545' : '#ffc107';
+                const result = battle.player1_result === 'win' ? 'Victory' : battle.player1_result === 'loss' ? 'Defeat' : 'Draw';
+                const resultColor = battle.player1_result === 'win' ? '#059669' : battle.player1_result === 'loss' ? '#dc2626' : '#d97706';
 
                 // Determine matchup indicator
                 let matchupClass = 'matchup-neutral';
                 let matchupText = 'Neutral Matchup';
                 if (battle.matchup_rating > 0.55) {
                     matchupClass = 'matchup-favorable';
-                    matchupText = '✓ Favorable Matchup';
+                    matchupText = 'Favorable Matchup';
                 } else if (battle.matchup_rating < 0.45) {
                     matchupClass = 'matchup-unfavorable';
-                    matchupText = '✗ Unfavorable Matchup';
+                    matchupText = 'Unfavorable Matchup';
                 }
 
                 let html = `
                     <div class="battle-detail-header">
                         <h2 style="color: ${resultColor};">${result}</h2>
-                        <div class="battle-score">${battle.player1_crowns} - ${battle.player2_crowns}</div>
-                        <p style="color: #666;">${battle.game_mode} | ${battle.arena || 'Arena'}</p>
-                        <p style="color: #999; font-size: 14px;">${new Date(battle.battle_time).toLocaleString()}</p>
+                        <div class="detail-score">${battle.player1_crowns} - ${battle.player2_crowns}</div>
+                        <div class="detail-meta">
+                            ${battle.game_mode} • ${battle.arena || 'Arena'} • ${new Date(battle.battle_time).toLocaleString()}
+                        </div>
                     </div>
 
                     <div class="matchup-indicator ${matchupClass}">
-                        ${matchupText} (${(battle.matchup_rating * 100).toFixed(0)}%)
+                        ${matchupText} • Win Probability: ${(battle.matchup_rating * 100).toFixed(0)}%
                     </div>
 
                     <div class="vs-section">
                         <div class="player-section">
                             <h3>Your Deck</h3>
-                            <p><strong>Archetype:</strong> ${battle.deck_archetype || 'Unknown'}</p>
-                            <p><strong>Avg Elixir:</strong> ${battle.deck_avg_cost.toFixed(1)}</p>
+                            <div class="deck-meta">
+                                <strong>Archetype:</strong> ${battle.deck_archetype || 'Unknown'}<br>
+                                <strong>Avg Elixir Cost:</strong> ${battle.deck_avg_cost.toFixed(1)}
+                            </div>
                             <div class="deck-grid">
                                 ${battle.player1_deck.map(card => `
                                     <div class="card-detail">
@@ -522,9 +663,11 @@ async def root():
 
                         <div class="player-section">
                             <h3>Opponent's Deck</h3>
-                            <p><strong>Player:</strong> ${battle.opponent_name || 'Unknown'}</p>
-                            <p><strong>Archetype:</strong> ${battle.opponent_archetype || 'Unknown'}</p>
-                            <p><strong>Avg Elixir:</strong> ${battle.opponent_avg_cost.toFixed(1)}</p>
+                            <div class="deck-meta">
+                                <strong>Player:</strong> ${battle.opponent_name || 'Unknown'}<br>
+                                <strong>Archetype:</strong> ${battle.opponent_archetype || 'Unknown'}<br>
+                                <strong>Avg Elixir Cost:</strong> ${battle.opponent_avg_cost.toFixed(1)}
+                            </div>
                             <div class="deck-grid">
                                 ${battle.player2_deck.map(card => `
                                     <div class="card-detail">
@@ -536,7 +679,9 @@ async def root():
                         </div>
                     </div>
 
-                    <h3 style="margin-top: 30px; margin-bottom: 15px;">Battle Statistics</h3>
+                    <div class="section-divider"></div>
+
+                    <h3 class="section-title">Battle Statistics</h3>
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-label">Game Mode</div>
