@@ -149,6 +149,12 @@ async def root():
                 padding: 15px;
                 margin-bottom: 10px;
                 border-left: 4px solid #667eea;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .battle-card:hover {
+                transform: translateX(5px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
             .deck-preview {
                 display: flex;
@@ -194,6 +200,151 @@ async def root():
                 color: #666;
                 margin-top: 5px;
             }
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                z-index: 1000;
+                overflow-y: auto;
+                padding: 20px;
+            }
+            .modal.show {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 900px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+            }
+            .modal-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                font-size: 28px;
+                cursor: pointer;
+                color: #666;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background 0.2s;
+            }
+            .modal-close:hover {
+                background: #f0f0f0;
+            }
+            .battle-detail-header {
+                text-align: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #e0e0e0;
+            }
+            .battle-score {
+                font-size: 48px;
+                font-weight: bold;
+                color: #667eea;
+                margin: 10px 0;
+            }
+            .vs-section {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                gap: 20px;
+                margin: 30px 0;
+                align-items: start;
+            }
+            .player-section {
+                background: #f8f9fa;
+                border-radius: 15px;
+                padding: 20px;
+            }
+            .player-section h3 {
+                color: #667eea;
+                margin-bottom: 15px;
+                font-size: 18px;
+            }
+            .deck-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-top: 15px;
+            }
+            .card-detail {
+                background: white;
+                padding: 10px;
+                border-radius: 8px;
+                font-size: 14px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .card-level {
+                background: #667eea;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .vs-divider {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                font-weight: bold;
+                color: #764ba2;
+            }
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-top: 20px;
+            }
+            .info-item {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            .info-label {
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 5px;
+            }
+            .info-value {
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+            }
+            .matchup-indicator {
+                padding: 15px;
+                border-radius: 10px;
+                text-align: center;
+                margin: 20px 0;
+                font-weight: bold;
+            }
+            .matchup-favorable {
+                background: #d4edda;
+                color: #155724;
+            }
+            .matchup-neutral {
+                background: #fff3cd;
+                color: #856404;
+            }
+            .matchup-unfavorable {
+                background: #f8d7da;
+                color: #721c24;
+            }
         </style>
     </head>
     <body>
@@ -211,6 +362,17 @@ async def root():
             <div id="results" class="results"></div>
         </div>
 
+        <!-- Battle Detail Modal -->
+        <div id="battleModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <div id="battleDetail"></div>
+            </div>
+        </div>
+
+        <script>
+            let currentBattles = [];  // Store battles for modal access
+        </script>
         <script>
             async function analyzePlayer() {
                 const playerTag = document.getElementById('playerTag').value.replace('#', '');
@@ -255,6 +417,9 @@ async def root():
                 const resultsDiv = document.getElementById('results');
                 const winRate = ((player.wins / (player.wins + player.losses)) * 100).toFixed(1);
 
+                // Store battles for modal access
+                currentBattles = battles;
+
                 let html = `
                     <h2>${player.player_name}</h2>
                     <p><strong>Tag:</strong> ${player.player_tag} | <strong>Trophies:</strong> 🏆 ${player.current_trophies}</p>
@@ -274,7 +439,7 @@ async def root():
                         </div>
                     </div>
 
-                    <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Battles (${battles.length})</h3>
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Battles (${battles.length}) - Click for details</h3>
                 `;
 
                 battles.forEach((battle, index) => {
@@ -282,7 +447,7 @@ async def root():
                     const resultColor = battle.player1_result === 'win' ? '#28a745' : battle.player1_result === 'loss' ? '#dc3545' : '#ffc107';
 
                     html += `
-                        <div class="battle-card">
+                        <div class="battle-card" onclick="showBattleDetail(${index})">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <strong style="color: ${resultColor};">${result}</strong>
@@ -306,6 +471,108 @@ async def root():
                 resultsDiv.innerHTML = html;
                 resultsDiv.classList.add('show');
             }
+
+            function showBattleDetail(battleIndex) {
+                const battle = currentBattles[battleIndex];
+                const modal = document.getElementById('battleModal');
+                const detailDiv = document.getElementById('battleDetail');
+
+                const result = battle.player1_result === 'win' ? '🏆 VICTORY' : battle.player1_result === 'loss' ? '❌ DEFEAT' : '🤝 DRAW';
+                const resultColor = battle.player1_result === 'win' ? '#28a745' : battle.player1_result === 'loss' ? '#dc3545' : '#ffc107';
+
+                // Determine matchup indicator
+                let matchupClass = 'matchup-neutral';
+                let matchupText = 'Neutral Matchup';
+                if (battle.matchup_rating > 0.55) {
+                    matchupClass = 'matchup-favorable';
+                    matchupText = '✓ Favorable Matchup';
+                } else if (battle.matchup_rating < 0.45) {
+                    matchupClass = 'matchup-unfavorable';
+                    matchupText = '✗ Unfavorable Matchup';
+                }
+
+                let html = `
+                    <div class="battle-detail-header">
+                        <h2 style="color: ${resultColor};">${result}</h2>
+                        <div class="battle-score">${battle.player1_crowns} - ${battle.player2_crowns}</div>
+                        <p style="color: #666;">${battle.game_mode} | ${battle.arena || 'Arena'}</p>
+                        <p style="color: #999; font-size: 14px;">${new Date(battle.battle_time).toLocaleString()}</p>
+                    </div>
+
+                    <div class="matchup-indicator ${matchupClass}">
+                        ${matchupText} (${(battle.matchup_rating * 100).toFixed(0)}%)
+                    </div>
+
+                    <div class="vs-section">
+                        <div class="player-section">
+                            <h3>Your Deck</h3>
+                            <p><strong>Archetype:</strong> ${battle.deck_archetype || 'Unknown'}</p>
+                            <p><strong>Avg Elixir:</strong> ${battle.deck_avg_cost.toFixed(1)}</p>
+                            <div class="deck-grid">
+                                ${battle.player1_deck.map(card => `
+                                    <div class="card-detail">
+                                        <span>${card.name}</span>
+                                        <span class="card-level">Lv ${card.level}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="vs-divider">VS</div>
+
+                        <div class="player-section">
+                            <h3>Opponent's Deck</h3>
+                            <p><strong>Player:</strong> ${battle.opponent_name || 'Unknown'}</p>
+                            <p><strong>Archetype:</strong> ${battle.opponent_archetype || 'Unknown'}</p>
+                            <p><strong>Avg Elixir:</strong> ${battle.opponent_avg_cost.toFixed(1)}</p>
+                            <div class="deck-grid">
+                                ${battle.player2_deck.map(card => `
+                                    <div class="card-detail">
+                                        <span>${card.name}</span>
+                                        <span class="card-level">Lv ${card.level}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">Battle Statistics</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Game Mode</div>
+                            <div class="info-value">${battle.game_mode}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Battle Type</div>
+                            <div class="info-value">${battle.battle_type || 'Standard'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Your Crowns</div>
+                            <div class="info-value">${battle.player1_crowns} 👑</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Opponent Crowns</div>
+                            <div class="info-value">${battle.player2_crowns} 👑</div>
+                        </div>
+                    </div>
+                `;
+
+                detailDiv.innerHTML = html;
+                modal.classList.add('show');
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('battleModal');
+                modal.classList.remove('show');
+            }
+
+            // Close modal when clicking outside
+            document.addEventListener('click', (e) => {
+                const modal = document.getElementById('battleModal');
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
 
             // Auto-analyze on page load if default tag is present
             window.onload = () => {
