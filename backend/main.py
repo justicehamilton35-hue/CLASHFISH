@@ -38,9 +38,8 @@ async def startup_event():
     print(f"📊 Environment: {settings.environment}")
     print(f"🎮 Mock Data Mode: {settings.use_mock_data}")
 
-    # Initialize database
+    # Initialize database (will skip if not available)
     init_db()
-    print("✅ Database initialized")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -342,21 +341,26 @@ async def get_player(player_tag: str, db: Session = Depends(get_db)):
         api_data = await clash_royale_client.get_player(player_tag)
         player_data = clash_royale_client.parse_player_data(api_data)
 
-        # Store/update in database
-        player = db.query(Player).filter(Player.player_id == player_data['player_id']).first()
-        if player:
-            # Update existing player
-            for key, value in player_data.items():
-                setattr(player, key, value)
-        else:
-            # Create new player
-            player = Player(**player_data)
-            db.add(player)
+        # Store/update in database (if available)
+        if db is not None:
+            try:
+                player = db.query(Player).filter(Player.player_id == player_data['player_id']).first()
+                if player:
+                    # Update existing player
+                    for key, value in player_data.items():
+                        setattr(player, key, value)
+                else:
+                    # Create new player
+                    player = Player(**player_data)
+                    db.add(player)
 
-        db.commit()
-        db.refresh(player)
+                db.commit()
+                db.refresh(player)
+            except Exception as e:
+                print(f"⚠️  Database operation failed: {e}")
+                # Continue without database
 
-        return player.to_dict()
+        return player_data
 
     except ClashRoyaleAPIError as e:
         raise HTTPException(status_code=404, detail=str(e))
