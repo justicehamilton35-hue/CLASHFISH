@@ -14,12 +14,34 @@
 
 ## Quick Start
 
+### Two Ways to Run ClashFish:
+
+1. **Mock Data Mode** (No API key needed) - Use sample data for testing
+2. **Real API Mode** (Requires API key) - Analyze real players
+
+---
+
+## 🔑 Getting Your Clash Royale API Key (Optional)
+
+To analyze real players, you need an API key from Supercell:
+
+1. **Get API Key**: Visit https://developer.clashroyale.com
+2. **Find Your IP**: Run `curl https://api.ipify.org`
+3. **Whitelist IP**: Add your IP address to the API key settings
+4. **Configure ClashFish**: Run `./scripts/setup_api_key.sh` and enter your key
+
+**📖 Detailed instructions**: See [API_SETUP.md](./API_SETUP.md)
+
+**🧪 Test your key**: Run `./scripts/test_api_key.sh`
+
+---
+
 ### Prerequisites
 
 - Python 3.10+
-- PostgreSQL 14+
-- Node.js 18+ (for frontend)
-- Docker & Docker Compose (recommended)
+- PostgreSQL 14+ (optional - only if not using mock data)
+- Node.js 18+ (optional - for future frontend)
+- Docker & Docker Compose (optional)
 
 ### Installation
 

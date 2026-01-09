@@ -77,7 +77,7 @@ class ClashRoyaleClient:
             if self.mock_player and self.mock_player.get('tag', '').lstrip('#') == player_tag:
                 return self.mock_player
             else:
-                raise ClashRoyaleAPIError(f"Mock player {player_tag} not found")
+                raise ClashRoyaleAPIError(f"Mock player {player_tag} not found. Only V2QUUQVU8 is available in mock mode.")
 
         # Make real API request
         url = f"{self.base_url}/players/%23{player_tag}"
@@ -90,13 +90,24 @@ class ClashRoyaleClient:
                 return response.json()
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 404:
-                raise ClashRoyaleAPIError(f"Player {player_tag} not found")
+                raise ClashRoyaleAPIError(f"Player #{player_tag} not found. Check the player tag is correct.")
             elif e.response.status_code == 403:
-                raise ClashRoyaleAPIError("Invalid API key or access denied")
+                error_msg = (
+                    "Access denied (403). This usually means:\n"
+                    "  1. Invalid API key - check your CLASH_ROYALE_API_KEY in .env\n"
+                    "  2. IP address not whitelisted - check your IP at developer.clashroyale.com\n"
+                    "  3. API key expired - generate a new key\n"
+                    "Run 'curl https://api.ipify.org' to check your current IP address."
+                )
+                raise ClashRoyaleAPIError(error_msg)
+            elif e.response.status_code == 429:
+                raise ClashRoyaleAPIError("Rate limit exceeded. Please wait a few seconds and try again.")
+            elif e.response.status_code == 503:
+                raise ClashRoyaleAPIError("Clash Royale API is temporarily unavailable. Please try again later.")
             else:
-                raise ClashRoyaleAPIError(f"API error: {e.response.status_code}")
+                raise ClashRoyaleAPIError(f"API error {e.response.status_code}: {e.response.text}")
         except httpx.RequestError as e:
-            raise ClashRoyaleAPIError(f"Network error: {str(e)}")
+            raise ClashRoyaleAPIError(f"Network error: {str(e)}. Check your internet connection.")
 
     async def get_player_battles(self, player_tag: str) -> List[Dict[str, Any]]:
         """
@@ -129,13 +140,24 @@ class ClashRoyaleClient:
                 return response.json()
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 404:
-                raise ClashRoyaleAPIError(f"Player {player_tag} not found")
+                raise ClashRoyaleAPIError(f"Player #{player_tag} not found or has no battle history.")
             elif e.response.status_code == 403:
-                raise ClashRoyaleAPIError("Invalid API key or access denied")
+                error_msg = (
+                    "Access denied (403). This usually means:\n"
+                    "  1. Invalid API key - check your CLASH_ROYALE_API_KEY in .env\n"
+                    "  2. IP address not whitelisted - check your IP at developer.clashroyale.com\n"
+                    "  3. API key expired - generate a new key\n"
+                    "Run 'curl https://api.ipify.org' to check your current IP address."
+                )
+                raise ClashRoyaleAPIError(error_msg)
+            elif e.response.status_code == 429:
+                raise ClashRoyaleAPIError("Rate limit exceeded. Please wait a few seconds and try again.")
+            elif e.response.status_code == 503:
+                raise ClashRoyaleAPIError("Clash Royale API is temporarily unavailable. Please try again later.")
             else:
-                raise ClashRoyaleAPIError(f"API error: {e.response.status_code}")
+                raise ClashRoyaleAPIError(f"API error {e.response.status_code}: {e.response.text}")
         except httpx.RequestError as e:
-            raise ClashRoyaleAPIError(f"Network error: {str(e)}")
+            raise ClashRoyaleAPIError(f"Network error: {str(e)}. Check your internet connection.")
 
     def parse_player_data(self, api_data: Dict[str, Any]) -> Dict[str, Any]:
         """
