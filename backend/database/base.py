@@ -13,10 +13,30 @@ except ImportError:
     print("⚠️  SQLAlchemy not available - database features disabled")
     print("   Mock data mode will still work!")
 
+    # Create dummy classes so models can still be imported
+    class Session:
+        """Dummy Session class."""
+        pass
+
+    def sessionmaker(*args, **kwargs):
+        """Dummy sessionmaker."""
+        return None
+
 from backend.config import settings
 
 # Create Base class for models (if SQLAlchemy available)
-Base = declarative_base() if SQLALCHEMY_AVAILABLE else None
+if SQLALCHEMY_AVAILABLE:
+    Base = declarative_base()
+else:
+    # Create a dummy Base class so models can still be imported (just won't work)
+    class DummyBase:
+        """Dummy base class when SQLAlchemy is not available."""
+        __tablename__ = ""
+
+        def __init__(self, *args, **kwargs):
+            pass
+
+    Base = DummyBase
 
 # Lazy initialization
 engine = None
