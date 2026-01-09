@@ -1,0 +1,190 @@
+[
+  {
+    "type": "PvP",
+    "battleTime": "20260108T143022.000Z",
+    "isLadderTournament": false,
+    "arena": {
+      "id": 54000022,
+      "name": "Legendary Arena"
+    },
+    "gameMode": {
+      "id": 72000006,
+      "name": "Ladder_1v1"
+    },
+    "deckSelection": "collection",
+    "team": [
+      {
+        "tag": "#V2QUUQVU8",
+        "name": "ClashMaster",
+        "startingTrophies": 5234,
+        "trophyChange": 30,
+        "crowns": 3,
+        "kingTowerHitPoints": 4200,
+        "princessTowersHitPoints": [1450, 1200],
+        "clan": {
+          "tag": "#ABC123",
+          "name": "Elite Warriors",
+          "badgeId": 16000001
+        },
+        "cards": [
+          {"name": "Hog Rider", "id": 26000009, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Musketeer", "id": 26000014, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Golem", "id": 26000034, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Skeletons", "id": 26000010, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Spirit", "id": 26000030, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Cannon", "id": 27000004, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Fireball", "id": 28000000, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "The Log", "id": 28000007, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ],
+    "opponent": [
+      {
+        "tag": "#OPPONENT1",
+        "name": "GolemKing",
+        "startingTrophies": 5198,
+        "trophyChange": -30,
+        "crowns": 1,
+        "kingTowerHitPoints": 2100,
+        "princessTowersHitPoints": [0, 0],
+        "clan": {
+          "tag": "#DEF456",
+          "name": "Dark Knights",
+          "badgeId": 16000002
+        },
+        "cards": [
+          {"name": "Golem", "id": 26000005, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Night Witch", "id": 26000048, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Baby Dragon", "id": 26000015, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Tornado", "id": 28000011, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Lightning", "id": 28000004, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Mega Minion", "id": 26000039, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Lumberjack", "id": 26000035, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Bats", "id": 26000042, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "PvP",
+    "battleTime": "20260108T140512.000Z",
+    "isLadderTournament": false,
+    "arena": {
+      "id": 54000022,
+      "name": "Legendary Arena"
+    },
+    "gameMode": {
+      "id": 72000006,
+      "name": "Ladder_1v1"
+    },
+    "deckSelection": "collection",
+    "team": [
+      {
+        "tag": "#V2QUUQVU8",
+        "name": "ClashMaster",
+        "startingTrophies": 5204,
+        "trophyChange": 30,
+        "crowns": 2,
+        "kingTowerHitPoints": 3800,
+        "princessTowersHitPoints": [0, 850],
+        "clan": {
+          "tag": "#ABC123",
+          "name": "Elite Warriors",
+          "badgeId": 16000001
+        },
+        "cards": [
+          {"name": "Hog Rider", "id": 26000009, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Musketeer", "id": 26000014, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Golem", "id": 26000034, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Skeletons", "id": 26000010, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Spirit", "id": 26000030, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Cannon", "id": 27000004, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Fireball", "id": 28000000, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "The Log", "id": 28000007, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ],
+    "opponent": [
+      {
+        "tag": "#OPPONENT2",
+        "name": "LogBaitPro",
+        "startingTrophies": 5210,
+        "trophyChange": -28,
+        "crowns": 1,
+        "kingTowerHitPoints": 1800,
+        "princessTowersHitPoints": [0, 0],
+        "cards": [
+          {"name": "Goblin Barrel", "id": 28000001, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Princess", "id": 26000004, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Rocket", "id": 28000003, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Inferno Tower", "id": 27000003, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Knight", "id": 26000000, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Goblin Gang", "id": 26000041, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Spirit", "id": 26000030, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "The Log", "id": 28000007, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ]
+  },
+  {
+    "type": "PvP",
+    "battleTime": "20260108T135045.000Z",
+    "isLadderTournament": false,
+    "arena": {
+      "id": 54000022,
+      "name": "Legendary Arena"
+    },
+    "gameMode": {
+      "id": 72000006,
+      "name": "Ladder_1v1"
+    },
+    "deckSelection": "collection",
+    "team": [
+      {
+        "tag": "#V2QUUQVU8",
+        "name": "ClashMaster",
+        "startingTrophies": 5176,
+        "trophyChange": 28,
+        "crowns": 1,
+        "kingTowerHitPoints": 2200,
+        "princessTowersHitPoints": [0, 0],
+        "clan": {
+          "tag": "#ABC123",
+          "name": "Elite Warriors",
+          "badgeId": 16000001
+        },
+        "cards": [
+          {"name": "Hog Rider", "id": 26000009, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Musketeer", "id": 26000014, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Golem", "id": 26000034, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Skeletons", "id": 26000010, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Spirit", "id": 26000030, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Cannon", "id": 27000004, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Fireball", "id": 28000000, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "The Log", "id": 28000007, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ],
+    "opponent": [
+      {
+        "tag": "#OPPONENT3",
+        "name": "XBowMaster",
+        "startingTrophies": 5189,
+        "trophyChange": -30,
+        "crowns": 0,
+        "kingTowerHitPoints": 500,
+        "princessTowersHitPoints": [200, 0],
+        "cards": [
+          {"name": "X-Bow", "id": 27000001, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Tesla", "id": 27000007, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Archers", "id": 26000001, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Golem", "id": 26000034, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Skeletons", "id": 26000010, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Ice Spirit", "id": 26000030, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "Fireball", "id": 28000000, "level": 11, "maxLevel": 14, "starLevel": 0},
+          {"name": "The Log", "id": 28000007, "level": 11, "maxLevel": 14, "starLevel": 0}
+        ]
+      }
+    ]
+  }
+]

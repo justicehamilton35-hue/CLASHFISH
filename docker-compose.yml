@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: clashfish_postgres
+    environment:
+      POSTGRES_USER: clashfish
+      POSTGRES_PASSWORD: clashfish
+      POSTGRES_DB: clashfish
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clashfish"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: clashfish_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:6-latest
+    container_name: clashfish_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: clashfish_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://clashfish:clashfish@postgres:5432/clashfish
+      - REDIS_URL=redis://redis:6379/0
+      - MONGODB_URL=mongodb://mongodb:27017
+      - USE_MOCK_DATA=true
+      - DEBUG=true
+    volumes:
+      - ./backend:/app/backend
+      - ./data:/app/data
+      - ./ml:/app/ml
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+  redis_data:
+  mongodb_data:

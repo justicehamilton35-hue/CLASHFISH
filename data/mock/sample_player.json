@@ -1,0 +1,159 @@
+{
+  "tag": "#V2QUUQVU8",
+  "name": "ClashMaster",
+  "expLevel": 13,
+  "trophies": 5234,
+  "bestTrophies": 5678,
+  "wins": 1247,
+  "losses": 1053,
+  "battleCount": 2300,
+  "threeCrownWins": 423,
+  "challengeCardsWon": 15678,
+  "challengeMaxWins": 12,
+  "tournamentCardsWon": 8923,
+  "tournamentBattleCount": 145,
+  "role": "member",
+  "donations": 234,
+  "donationsReceived": 198,
+  "totalDonations": 23456,
+  "warDayWins": 89,
+  "clanCardsCollected": 5678,
+  "clan": {
+    "tag": "#ABC123",
+    "name": "Elite Warriors",
+    "badgeId": 16000001
+  },
+  "arena": {
+    "id": 54000022,
+    "name": "Legendary Arena"
+  },
+  "leagueStatistics": {
+    "currentSeason": {
+      "trophies": 5234,
+      "bestTrophies": 5456
+    },
+    "previousSeason": {
+      "id": "2026-01",
+      "trophies": 5123,
+      "bestTrophies": 5445
+    },
+    "bestSeason": {
+      "id": "2025-11",
+      "trophies": 5678,
+      "rank": 1234
+    }
+  },
+  "badges": [
+    {
+      "name": "Ladder",
+      "level": 3,
+      "maxLevel": 5,
+      "progress": 5234,
+      "target": 6000
+    }
+  ],
+  "achievements": [
+    {
+      "name": "Giant Slayer",
+      "stars": 3,
+      "value": 156,
+      "target": 200,
+      "info": "Destroy 200 Crown Towers"
+    }
+  ],
+  "cards": [
+    {
+      "name": "Hog Rider",
+      "id": 26000009,
+      "level": 11,
+      "maxLevel": 14,
+      "count": 1234,
+      "requiredForUpgrade": 2000,
+      "rarity": "Rare",
+      "elixirCost": 4
+    },
+    {
+      "name": "Musketeer",
+      "id": 26000014,
+      "level": 11,
+      "maxLevel": 14,
+      "count": 1456,
+      "requiredForUpgrade": 2000,
+      "rarity": "Rare",
+      "elixirCost": 4
+    }
+  ],
+  "currentDeck": [
+    {
+      "name": "Hog Rider",
+      "id": 26000009,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Rare",
+      "elixirCost": 4
+    },
+    {
+      "name": "Musketeer",
+      "id": 26000014,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Rare",
+      "elixirCost": 4
+    },
+    {
+      "name": "Ice Golem",
+      "id": 26000034,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Rare",
+      "elixirCost": 2
+    },
+    {
+      "name": "Skeletons",
+      "id": 26000010,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Common",
+      "elixirCost": 1
+    },
+    {
+      "name": "Ice Spirit",
+      "id": 26000030,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Common",
+      "elixirCost": 1
+    },
+    {
+      "name": "Cannon",
+      "id": 27000004,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Common",
+      "elixirCost": 3
+    },
+    {
+      "name": "Fireball",
+      "id": 28000000,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Rare",
+      "elixirCost": 4
+    },
+    {
+      "name": "The Log",
+      "id": 28000007,
+      "level": 11,
+      "maxLevel": 14,
+      "rarity": "Legendary",
+      "elixirCost": 2
+    }
+  ],
+  "currentFavouriteCard": {
+    "name": "Hog Rider",
+    "id": 26000009,
+    "maxLevel": 14,
+    "rarity": "Rare",
+    "elixirCost": 4
+  }
+}
