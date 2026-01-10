@@ -26,6 +26,11 @@ torch==2.1.2
 openai==1.7.2
 anthropic==0.8.1
 
+# Computer Vision
+inference==0.9.20
+opencv-python==4.9.0.80
+pillow==10.2.0
+
 # Utilities
 python-dotenv==1.0.0
 pyyaml==6.0.1

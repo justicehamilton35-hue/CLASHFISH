@@ -1,17 +1,28 @@
 """
 ClashFish API - Main application entry point.
 """
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy.orm import Session
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import uvicorn
+import tempfile
+import os
 
 from backend.config import settings
 from backend.database import get_db, init_db
 from backend.models import Player, Match, MatchAnalysis
-from backend.services import clash_royale_client, ClashRoyaleAPIError, deck_classifier
+from backend.services import (
+    clash_royale_client,
+    ClashRoyaleAPIError,
+    deck_classifier,
+    StrategicAnalyzer,
+    CardDetector,
+    ReplayAnalyzer,
+    CARD_COSTS,
+    CV_AVAILABLE
+)
 
 # Create FastAPI app
 app = FastAPI(
@@ -485,11 +496,25 @@ async def root():
 
         <div class="container">
             <div class="search-section">
+                <h3 class="section-title">Player Analysis</h3>
                 <div class="search-box">
                     <input type="text" id="playerTag" placeholder="Enter player tag (e.g., V2QUUQVU8)" value="V2QUUQVU8">
                     <button onclick="analyzePlayer()">Analyze Player</button>
                 </div>
                 <div id="status" class="status"></div>
+            </div>
+
+            <div class="search-section">
+                <h3 class="section-title">Replay Analysis</h3>
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
+                    Upload a replay video or screenshot to get move-by-move analysis with Stockfish-like evaluations.
+                </p>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="file" id="replayFile" accept="video/*,image/*" style="flex: 1;">
+                    <button onclick="uploadReplay()">Analyze Replay</button>
+                </div>
+                <div id="replayStatus" class="status"></div>
+                <div id="replayResults" style="margin-top: 20px;"></div>
             </div>
 
             <div id="results"></div>
@@ -719,6 +744,159 @@ async def root():
                 }
             });
 
+            async function uploadReplay() {
+                const fileInput = document.getElementById('replayFile');
+                const statusDiv = document.getElementById('replayStatus');
+                const resultsDiv = document.getElementById('replayResults');
+
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showReplayStatus('Please select a video or image file', 'error');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                showReplayStatus('🔄 Analyzing replay... This may take a moment', 'info');
+                resultsDiv.innerHTML = '';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const response = await fetch('/api/v1/replay/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.detail || 'Upload failed');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        displayReplayAnalysis(data);
+                        showReplayStatus('✅ Analysis complete!', 'success');
+                    } else {
+                        showReplayStatus('⚠️ ' + data.message, 'error');
+                    }
+
+                } catch (error) {
+                    showReplayStatus('❌ Error: ' + error.message, 'error');
+                }
+            }
+
+            function showReplayStatus(message, type) {
+                const statusDiv = document.getElementById('replayStatus');
+                statusDiv.textContent = message;
+                statusDiv.className = `status ${type}`;
+            }
+
+            function displayReplayAnalysis(data) {
+                const resultsDiv = document.getElementById('replayResults');
+                const analysis = data.analysis;
+
+                let html = `
+                    <div class="player-header">
+                        <h2>Replay Analysis</h2>
+                        <p style="color: #6b7280; margin-bottom: 16px;">${analysis.summary}</p>
+
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${analysis.accuracy.overall}%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.card_plays.length}</div>
+                                <div class="stat-label">Moves Analyzed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${analysis.critical_moments.length}</div>
+                                <div class="stat-label">Critical Moments</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="battles-section">
+                        <h3 class="section-title">Move-by-Move Analysis</h3>
+                `;
+
+                // Display moves
+                analysis.move_evaluations.forEach((move, index) => {
+                    if (move.is_player) {
+                        const qualityColor =
+                            move.quality.rating === 'brilliant' ? '#059669' :
+                            move.quality.rating === 'great' ? '#3b82f6' :
+                            move.quality.rating === 'good' ? '#6b7280' :
+                            move.quality.rating === 'inaccuracy' ? '#d97706' :
+                            move.quality.rating === 'mistake' ? '#dc2626' :
+                            '#991b1b';
+
+                        html += `
+                            <div class="battle-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong>Move ${move.move_number}: ${move.card} ${move.quality.symbol}</strong>
+                                        <span style="color: ${qualityColor}; margin-left: 12px;">${move.quality.rating}</span>
+                                    </div>
+                                    <div style="color: #6b7280; font-size: 14px;">
+                                        ${move.timestamp.toFixed(1)}s
+                                    </div>
+                                </div>
+                                <div style="margin-top: 8px; color: #6b7280; font-size: 13px;">
+                                    ${move.context} • Score: ${move.evaluation_score.toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                // Display insights
+                if (analysis.insights.length > 0) {
+                    html += `
+                        <div style="margin-top: 24px;">
+                            <h3 class="section-title">Strategic Insights</h3>
+                            <div style="background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    `;
+
+                    analysis.insights.forEach(insight => {
+                        html += `<p style="margin-bottom: 8px; color: #374151;">• ${insight}</p>`;
+                    });
+
+                    html += `</div></div>`;
+                }
+
+                // Display critical moments
+                if (analysis.critical_moments.length > 0) {
+                    html += `
+                        <div style="margin-top: 24px;">
+                            <h3 class="section-title">Critical Moments</h3>
+                    `;
+
+                    analysis.critical_moments.forEach(moment => {
+                        const momentColor =
+                            moment.type === 'brilliant_move' ? '#059669' :
+                            moment.type === 'blunder' ? '#dc2626' :
+                            '#d97706';
+
+                        html += `
+                            <div style="background: #fafafa; border-left: 4px solid ${momentColor}; border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+                                <strong>${moment.description}</strong>
+                                <div style="color: #6b7280; font-size: 13px; margin-top: 4px;">
+                                    At ${moment.timestamp.toFixed(1)}s
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+
+                resultsDiv.innerHTML = html;
+            }
+
             // Auto-analyze on page load if default tag is present
             window.onload = () => {
                 if (document.getElementById('playerTag').value) {
@@ -835,6 +1013,165 @@ async def get_archetypes():
             "signature_cards": data["signature_cards"],
         }
         for archetype_id, data in deck_classifier.ARCHETYPES.items()
+    }
+
+
+@app.post("/api/v1/replay/upload")
+async def upload_replay(
+    file: UploadFile = File(...),
+    roboflow_api_key: Optional[str] = None
+):
+    """
+    Upload replay video or screenshot for analysis.
+
+    Args:
+        file: Video file (.mp4, .mov) or image file (.jpg, .png)
+        roboflow_api_key: Optional Roboflow API key for enhanced detection
+
+    Returns:
+        Analysis results with move-by-move breakdown
+    """
+    if not CV_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Computer vision features not available. Install: inference, opencv-python, pillow"
+        )
+
+    # Validate file type
+    content_type = file.content_type
+    if not content_type:
+        raise HTTPException(status_code=400, detail="Unable to determine file type")
+
+    is_video = content_type.startswith("video/")
+    is_image = content_type.startswith("image/")
+
+    if not is_video and not is_image:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Upload video (.mp4, .mov) or image (.jpg, .png)"
+        )
+
+    try:
+        # Save uploaded file temporarily
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = tmp.name
+
+        # Initialize detector
+        detector = CardDetector(api_key=roboflow_api_key)
+
+        # Detect cards
+        if is_video:
+            # Process video frame-by-frame
+            detections_timeline = detector.detect_cards_from_video(
+                tmp_path,
+                frame_interval=30,  # 1 frame per second
+                confidence_threshold=0.5
+            )
+
+            # Extract card plays
+            card_plays = detector.extract_card_plays(detections_timeline)
+
+            # Analyze elixir usage
+            elixir_timeline = detector.analyze_elixir_usage(card_plays, CARD_COSTS)
+
+        else:
+            # Process single image
+            detections = detector.detect_cards_from_image(tmp_path, confidence_threshold=0.5)
+
+            # Convert to timeline format
+            card_plays = [{
+                'timestamp': 0.0,
+                'card': d['card_name'],
+                'position': {'x': d['x'], 'y': d['y']},
+                'confidence': d['confidence']
+            } for d in detections]
+
+            elixir_timeline = []
+
+        # Clean up temp file
+        os.unlink(tmp_path)
+
+        # Perform move-by-move analysis
+        if card_plays:
+            battle_result = {'player1_result': 'unknown'}  # Would come from actual battle data
+            deck_archetype = 'unknown'  # Would be detected from full deck
+
+            replay_analysis = ReplayAnalyzer.analyze_replay(
+                card_plays,
+                battle_result,
+                deck_archetype
+            )
+
+            return {
+                "success": True,
+                "file_type": "video" if is_video else "image",
+                "card_plays": card_plays,
+                "elixir_timeline": elixir_timeline if is_video else [],
+                "analysis": replay_analysis
+            }
+        else:
+            return {
+                "success": False,
+                "message": "No cards detected in the file. Ensure the image/video shows clear card placements."
+            }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing replay: {str(e)}")
+
+
+@app.post("/api/v1/replay/analyze-image")
+async def analyze_image(
+    file: UploadFile = File(...),
+    roboflow_api_key: Optional[str] = None
+):
+    """
+    Quick analysis of a single screenshot.
+
+    Returns:
+        Detected cards with positions
+    """
+    if not CV_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Computer vision features not available"
+        )
+
+    try:
+        # Save uploaded file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = tmp.name
+
+        # Detect cards
+        detector = CardDetector(api_key=roboflow_api_key)
+        detections = detector.detect_cards_from_image(tmp_path, confidence_threshold=0.4)
+
+        # Clean up
+        os.unlink(tmp_path)
+
+        return {
+            "success": True,
+            "detections": detections,
+            "count": len(detections)
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/v1/replay/capabilities")
+async def get_replay_capabilities():
+    """Check if replay analysis features are available."""
+    return {
+        "computer_vision_available": CV_AVAILABLE,
+        "supported_formats": {
+            "video": [".mp4", ".mov", ".avi"],
+            "image": [".jpg", ".jpeg", ".png"]
+        },
+        "models_available": list(CardDetector.MODELS.keys()) if CV_AVAILABLE else []
     }
 
 
